@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const htmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = function (env) {
 
@@ -9,15 +8,12 @@ module.exports = function (env) {
         entry: './src/index.js',
         output: {
             path: path.resolve(__dirname, 'build'),
-            filename: '[chunkhash].bundle.js'
+            filename: 'scene-transition.js',
+            publicPath: '/build/'
         },
         devtool: 'source-map',
         plugins: [
-            new webpack.ProgressPlugin(),
-            new htmlWebpackPlugin({
-                title: 'PIXI',
-                template: 'index.html'
-            })
+            new webpack.ProgressPlugin()
         ]
     };
 };
