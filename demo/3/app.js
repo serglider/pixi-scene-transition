@@ -1,5 +1,6 @@
 const twParams1 = {
     delay: 0,
+    rotation: 0,
     eas: 'Linear.None',
     easing: TWEEN.Easing.Linear.None,
     duration: 1000,
@@ -8,6 +9,7 @@ const twParams1 = {
 };
 const twParams2 = {
     delay: 0,
+    rotation: 0,
     eas: 'Linear.None',
     easing: TWEEN.Easing.Linear.None,
     duration: 1000,
@@ -51,6 +53,7 @@ const gui = new dat.GUI();
 const f1 = gui.addFolder('transition 1');
 f1.add(twParams1, 'columns', 1, 30).step(1);
 f1.add(twParams1, 'rows', 1, 30).step(1);
+f1.add(twParams1, 'rotation', 0, 31.4).step(0.02);
 f1.add(twParams1, 'delay', 0, 5000).step(50);
 f1.add(twParams1, 'duration', 0, 5000).step(50);
 const ctrl1 = f1.add(twParams1, 'eas', esList);
@@ -59,11 +62,12 @@ f1.open();
 const f2 = gui.addFolder('transition 2');
 f2.add(twParams2, 'columns', 1, 30).step(1);
 f2.add(twParams2, 'rows', 1, 30).step(1);
+f2.add(twParams2, 'rotation', 0, 31.4).step(0.02);
 f2.add(twParams2, 'delay', 0, 5000).step(50);
 f2.add(twParams2, 'duration', 0, 5000).step(50);
 const ctrl2 = f2.add(twParams2, 'eas', esList);
 ctrl2.onFinishChange(setEasing.bind(twParams2));
-f2.open();
+// f2.open();
 
 function setEasing(val) {
     const [k1, k2] = val.split('.');
@@ -78,7 +82,7 @@ PIXI.loader
 
 function setup(loader, resources) {
 
-    // TODO: add rotate and scale
+    // TODO: add scale
     // TODO: try other tween libs
     // TODO: PIXI.SceneTransitionManager.TweenItem class ??
     // TODO: triggering buttons
@@ -104,17 +108,22 @@ function setup(loader, resources) {
     scene1.on('pointerdown', () => {
         const regs1 = STM.getRegions(scene1, [twParams1.columns, twParams1.rows]);
         const data = regs1.map((bounds, i) => {
-            const from = {
-                y: bounds[1],
-                x: i % 2 ? -1000 : 1000
+
+            const _x = bounds[0] + bounds[2]/2;
+            const _y = bounds[3]/2;
+            const to = {
+                x: _x,
+                y: i % 2 ? -_y : bounds[3] + _y,
+                rotation: 9.5
             };
             const delay = twParams1.delay;
             return {
+                anchor: 0.5,
                 bounds,
                 easing: twParams1.easing,
                 delay,
                 duration: twParams1.duration,
-                from
+                to
             };
         });
         const trans = stm.createTransition(scene1, scene2, data);

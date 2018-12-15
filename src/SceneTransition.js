@@ -29,12 +29,14 @@ export default class SceneTransition {
         transitionContainer.visible = false;
         container1.visible = true;
         const tweens = data.map(item => {
-            const sprite = this._getSprite(container1, item.bounds, item.from);
+            const sprite = this._getSprite(container1, item.anchor, item.bounds, item.from);
             if (item.from) {
                 item.to = {
                     x: item.bounds[0],
                     y: item.bounds[1],
-                    alpha: 1
+                    alpha: 1,
+                    rotation: 0
+
                 }
             }
             transitionContainer.addChild(sprite);
@@ -84,17 +86,21 @@ export default class SceneTransition {
         return new this._TWEEN.Tween(tweenObj).to(data.to, data.duration).onUpdate(update).delay(delay).easing(es);
     }
 
-    _getSprite(view, bounds, fromObj) {
+    _getSprite(view, anchor, bounds, fromObj) {
         const texture = this._renderer.generateTexture(view, 0, 1, new PIXI.Rectangle(...bounds));
         const sprite = new PIXI.Sprite(texture);
+        if (anchor) {
+            sprite.anchor.set(anchor);
+        }
         if (fromObj) {
             Object.keys(fromObj).forEach(key => {
                 sprite[key] = fromObj[key];
             });
         } else {
-            sprite.x = bounds[0];
-            sprite.y = bounds[1];
+            sprite.x = bounds[0] + bounds[2] * sprite.anchor.x;
+            sprite.y = bounds[1] + bounds[3] * sprite.anchor.y;
         }
+
 
         return sprite;
     }

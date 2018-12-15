@@ -11,6 +11,9 @@ module.exports = function (env) {
             filename: 'scene-transition.js',
             publicPath: '/build/'
         },
+        devServer: {
+            open: true
+        },
         devtool: 'source-map',
         plugins: [
             new webpack.ProgressPlugin()
