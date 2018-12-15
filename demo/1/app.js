@@ -25,7 +25,6 @@ function setup(loader, resources) {
         anim1.rotation -= 0.01;
     });
 
-
     scene1.on('pointerdown', () => {
 
         const data = regs.map((bounds, i) => {
@@ -40,13 +39,10 @@ function setup(loader, resources) {
                 to
             };
         });
-        const trans = stm.createTransition(scene1, scene2, data, STM.TYPES.OUT);
-
-        trans.start().then(() => {
-            console.log('FOO');
-        })
+        const trans = stm.createTransition(scene1, scene2, data);
+        const lc = logComplete();
+        trans.start().then(lc);
     });
-
 
     scene2.on('pointerdown', () => {
         const data = regs.map((bounds, i) => {
@@ -61,9 +57,8 @@ function setup(loader, resources) {
                 from
             };
         });
-        const trans = stm.createTransition(scene2, scene1, data, STM.TYPES.IN);
-        trans.start().then(() => {
-            console.log('BAR');
-        })
+        const trans = stm.createTransition(scene2, scene1, data);
+        const lc = logComplete();
+        trans.start().then(lc);
     });
 }

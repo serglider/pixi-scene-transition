@@ -12,9 +12,11 @@ export default class SceneTransition {
         this._renderer = renderer;
     }
 
-    createTransition(fromView, toView, data, type = SceneTransition.TYPES.OUT) {
+    createTransition(fromView, toView, data) {
+
+        const isFrom = SceneTransition.getTransitionType(data);
         let container1, container2;
-        if (type === SceneTransition.TYPES.OUT) {
+        if (!isFrom) {
             container1 = fromView;
             container2 = toView;
         } else {
@@ -47,7 +49,7 @@ export default class SceneTransition {
                 this._ticker.start();
                 const promises = tweens.map(this._startTween);
                 return Promise.all(promises).then(() => {
-                    if (type === SceneTransition.TYPES.IN) {
+                    if (isFrom) {
                         container1.visible = true;
                         container2.visible = false;
                     }
@@ -77,8 +79,9 @@ export default class SceneTransition {
                 sprite[key] = tweenObj[key];
             });
         }
-
-        return new this._TWEEN.Tween(tweenObj).to(data.to, data.duration).onUpdate(update);
+        const delay = data.delay || 0;
+        const es = data.easing || this._TWEEN.Easing.Linear.None;
+        return new this._TWEEN.Tween(tweenObj).to(data.to, data.duration).onUpdate(update).delay(delay).easing(es);
     }
 
     _getSprite(view, bounds, fromObj) {
@@ -94,6 +97,11 @@ export default class SceneTransition {
         }
 
         return sprite;
+    }
+
+    static getTransitionType(list) {
+        return list.every(item => item.from);
+        // return isFrom ? this.TYPES.IN : this.TYPES.OUT;
     }
 
     static getRegions({width, height}, dims = [1, 1]) {

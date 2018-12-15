@@ -20,3 +20,10 @@ function createScene(parent, tileResource, {w, h}) {
     scene.buttonMode = true;
     return scene;
 }
+
+function logComplete() {
+    console.time('transition complete');
+    return function () {
+        console.timeEnd('transition complete');
+    };
+}
