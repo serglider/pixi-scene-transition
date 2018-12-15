@@ -82,10 +82,10 @@ PIXI.loader
 
 function setup(loader, resources) {
 
-    // TODO: add scale
     // TODO: try other tween libs
     // TODO: PIXI.SceneTransitionManager.TweenItem class ??
     // TODO: triggering buttons
+    // TODO: rules of rect division
 
     const app = new PIXI.Application(1000, 618);
     const wrapper = document.querySelector('.demo');
@@ -110,13 +110,14 @@ function setup(loader, resources) {
         const data = regs1.map((bounds, i) => {
 
             const _x = bounds[0] + bounds[2]/2;
-            const _y = bounds[3]/2;
+            const _y = bounds[1] + bounds[3]/2;
             const to = {
                 x: _x,
-                y: i % 2 ? -_y : bounds[3] + _y,
-                rotation: 9.5
+                y: _y,
+                scale: 0.01,
+                rotation: twParams1.rotation
             };
-            const delay = twParams1.delay;
+            const delay = i%2 ? 0 : 300;
             return {
                 anchor: 0.5,
                 bounds,
@@ -134,17 +135,22 @@ function setup(loader, resources) {
     scene2.on('pointerdown', () => {
         const regs2 = STM.getRegions(scene1, [twParams2.columns, twParams2.rows]);
         const data = regs2.map((bounds, i) => {
-            const to = {
-                y: bounds[1],
-                x: i % 2 ? -1000 : 1000
+            const _x = bounds[0] + bounds[2]/2;
+            const _y = bounds[1] + bounds[3]/2;
+            const from = {
+                x: _x,
+                y: _y,
+                scale: 0.01,
+                rotation: twParams2.rotation
             };
             const delay = twParams2.delay;
             return {
+                anchor: 0.5,
                 bounds,
                 easing: twParams2.easing,
                 delay,
                 duration: twParams2.duration,
-                to
+                from
             };
         });
         const trans = stm.createTransition(scene2, scene1, data);

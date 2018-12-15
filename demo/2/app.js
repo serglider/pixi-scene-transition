@@ -78,11 +78,6 @@ PIXI.loader
 
 function setup(loader, resources) {
 
-    // TODO: add rotate and scale
-    // TODO: try other tween libs
-    // TODO: PIXI.SceneTransitionManager.TweenItem class ??
-    // TODO: triggering buttons
-
     const app = new PIXI.Application(1000, 618);
     const wrapper = document.querySelector('.demo');
     wrapper.appendChild(app.view);
