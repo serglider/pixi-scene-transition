@@ -1,6 +1,16 @@
 import * as PIXI from "pixi.js";
 import TWEEN from "@tweenjs/tween.js";
 
+
+function drawRect(cont, rect) {
+    const thing = new PIXI.Graphics();
+    cont.addChild(thing);
+    thing.beginFill (0x000000, 0.8);
+    thing.position.x = rect[0] + 1;
+    thing.position.y = rect[1] + 1;
+    thing.drawRect(0, 0, rect[2] - 2, rect[3] - 2);
+}
+
 export default class TweensFactory {
 
     constructor(renderer, stage) {

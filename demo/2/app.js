@@ -48,22 +48,22 @@ function setup(loader, resources) {
     });
 
 
-    scene2.on('pointerdown', () => {
-        const data = regs.map((bounds, i) => {
-            const from = {
-                y: i % 2 ? -bounds[3] : 720,
-                x: bounds[0],
-                alpha: 0
-            };
-            return {
-                bounds,
-                duration: 1000,
-                from
-            };
-        });
-        const trans = stm.createTransition(scene2, scene1, data, STM.TYPES.IN);
-        trans.start().then(() => {
-            console.log('BAR');
-        })
-    });
+    // scene2.on('pointerdown', () => {
+    //     const data = regs.map((bounds, i) => {
+    //         const from = {
+    //             y: i % 2 ? -bounds[3] : 720,
+    //             x: bounds[0],
+    //             alpha: 0
+    //         };
+    //         return {
+    //             bounds,
+    //             duration: 1000,
+    //             from
+    //         };
+    //     });
+    //     const trans = stm.createTransition(scene2, scene1, data, STM.TYPES.IN);
+    //     trans.start().then(() => {
+    //         console.log('BAR');
+    //     })
+    // });
 }
