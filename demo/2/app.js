@@ -1,7 +1,7 @@
 PIXI.loader
-    .add('rock', '../../assets/rock01.jpg')
-    .add('clover', '../../assets/clover.jpg')
-    .add('anim', '../../assets/fighter.json')
+    .add('rock', '../assets/rock01.jpg')
+    .add('clover', '../assets/clover.jpg')
+    .add('anim', '../assets/fighter.json')
     .load(setup);
 
 function setup(loader, resources) {
