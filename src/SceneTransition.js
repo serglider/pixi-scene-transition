@@ -1,12 +1,17 @@
 export default class SceneTransition {
 
-    constructor(renderer, TWEEN) {
+    constructor(renderer, tweenLib) {
         this._ticker = new PIXI.ticker.Ticker();
         this._ticker.stop();
-        this._ticker.add(() => {
-            TWEEN.update();
-        });
-        this._TWEEN = TWEEN;
+        // this._ticker.add(() => {
+        //     tweenLib.update();
+        // });
+        if (tweenLib.Tween) {
+        console.log('TWEEN');
+        }else {
+            console.log('GSAP');
+        }
+        this._tweenLib = tweenLib;
         this._renderer = renderer;
     }
 
@@ -63,20 +68,31 @@ export default class SceneTransition {
 
     _startTween(tw) {
         return new Promise(resolve => {
-            tw.onComplete(resolve).start();
+            tw.eventCallback('onComplete', resolve);
+            tw.play();
         });
     }
 
     _createTween(sprite, data) {
         const tweenKeys = Object.keys(data.to);
         const tweenObj = tweenKeys.reduce(addToTweenObj, {});
-        const delay = data.delay || 0;
-        const easing = data.easing || this._TWEEN.Easing.Linear.None;
-        return new this._TWEEN.Tween(tweenObj)
-                        .to(data.to, data.duration)
-                        .onUpdate(update)
-                        .delay(delay)
-                        .easing(easing);
+        const delay = data.delay/1000 || 0;
+        const ease = data.easing || 'Linear.easeNone';
+
+        const vars = Object.assign({}, data.to, {
+            paused: true,
+            delay,
+            ease,
+            onUpdate: update
+        });
+
+        return this._tweenLib.to(tweenObj, data.duration/1000, vars);
+
+        // return new this._tweenLib.Tween(tweenObj)
+        //                 .to(data.to, data.duration)
+        //                 .onUpdate(update)
+        //                 .delay(delay)
+        //                 .easing(easing);
 
         function addToTweenObj(obj, key) {
             if (key === 'scale') {

@@ -1,8 +1,7 @@
 const twParams1 = {
     delay: 0,
     rotation: 0,
-    eas: 'Linear.None',
-    easing: TWEEN.Easing.Linear.None,
+    easing: 'Linear.easeNone',
     duration: 1000,
     columns: 1,
     rows: 1
@@ -10,45 +9,35 @@ const twParams1 = {
 const twParams2 = {
     delay: 0,
     rotation: 0,
-    eas: 'Linear.None',
-    easing: TWEEN.Easing.Linear.None,
+    easing: 'Linear.easeNone',
     duration: 1000,
     columns: 1,
     rows: 1
 };
-const esList = [
-    'Linear.None',
-    'Exponential.In',
-    'Exponential.Out',
-    'Exponential.InOut',
-    'Circular.In',
-    'Circular.Out',
-    'Circular.InOut',
-    'Elastic.In',
-    'Elastic.Out',
-    'Elastic.InOut',
-    'Back.In',
-    'Back.Out',
-    'Back.InOut',
-    'Bounce.In',
-    'Bounce.Out',
-    'Bounce.InOut',
-    'Quadratic.In',
-    'Quadratic.Out',
-    'Quadratic.InOut',
-    'Cubic.In',
-    'Cubic.Out',
-    'Cubic.InOut',
-    'Quartic.In',
-    'Quartic.Out',
-    'Quartic.InOut',
-    'Quintic.In',
-    'Quintic.Out',
-    'Quintic.InOut',
-    'Sinusoidal.In',
-    'Sinusoidal.Out',
-    'Sinusoidal.InOut',
-];
+const easeNames = [
+    'Elastic',
+    'Back',
+    'Bounce',
+    'SlowMo',
+    'SteppedEase',
+    'Rough',
+    'Circ',
+    'Expo',
+    'Sine',
+    'Power0.',
+    'Power2',
+    'Power4',
+    'Quad',
+    'Cubic',
+    'Quart',
+    'Cubic',
+    'Strong',
+].reduce((acc, name) => {
+    acc.push(`${name}.easeIn`, `${name}.easeOut`, `${name}.easeInOut`);
+    return acc;
+}, []);
+const esList = ['Linear.easeNone'].concat(easeNames);
+
 const gui = new dat.GUI();
 const f1 = gui.addFolder('transition 1');
 f1.add(twParams1, 'columns', 1, 30).step(1);
@@ -56,8 +45,7 @@ f1.add(twParams1, 'rows', 1, 30).step(1);
 f1.add(twParams1, 'rotation', 0, 31.4).step(0.02);
 f1.add(twParams1, 'delay', 0, 5000).step(50);
 f1.add(twParams1, 'duration', 0, 5000).step(50);
-const ctrl1 = f1.add(twParams1, 'eas', esList);
-ctrl1.onFinishChange(setEasing.bind(twParams1));
+const ctrl1 = f1.add(twParams1, 'easing', esList);
 // f1.open();
 const f2 = gui.addFolder('transition 2');
 f2.add(twParams2, 'columns', 1, 30).step(1);
@@ -65,14 +53,8 @@ f2.add(twParams2, 'rows', 1, 30).step(1);
 f2.add(twParams2, 'rotation', 0, 31.4).step(0.02);
 f2.add(twParams2, 'delay', 0, 5000).step(50);
 f2.add(twParams2, 'duration', 0, 5000).step(50);
-const ctrl2 = f2.add(twParams2, 'eas', esList);
-ctrl2.onFinishChange(setEasing.bind(twParams2));
+const ctrl2 = f2.add(twParams2, 'easing', esList);
 // f2.open();
-
-function setEasing(val) {
-    const [k1, k2] = val.split('.');
-    this.easing = TWEEN.Easing[k1][k2];
-}
 
 PIXI.loader
     .add('rock', '../assets/rock01.jpg')
@@ -93,7 +75,7 @@ function setup(loader, resources) {
     const anim = createAnimation(scene1, resources.anim, {x: W / 2 - 200, y: H / 2});
     const anim1 = createAnimation(scene2, resources.anim, {x: W / 2 + 200, y: H / 2});
 
-    const stm = new STM(app.renderer, TWEEN);
+    const stm = new STM(app.renderer, TweenLite);
 
     app.ticker.add(function () {
         anim.rotation += 0.01;
@@ -104,15 +86,15 @@ function setup(loader, resources) {
         const regs1 = STM.getRegions(scene1, [twParams1.columns, twParams1.rows]);
         const data = regs1.map((bounds, i) => {
 
-            const _x = bounds[0] + bounds[2]/2;
-            const _y = bounds[1] + bounds[3]/2;
+            const _x = bounds[0] + bounds[2] / 2;
+            const _y = bounds[1] + bounds[3] / 2;
             const to = {
                 x: _x,
                 y: _y,
                 scale: 0.01,
                 rotation: twParams1.rotation
             };
-            const delay = i%2 ? 0 : 300;
+            const delay = Math.random() > 0.5 ? 0 : 600;
             return {
                 anchor: 0.5,
                 bounds,
@@ -130,8 +112,8 @@ function setup(loader, resources) {
     scene2.on('pointerdown', () => {
         const regs2 = STM.getRegions(scene1, [twParams2.columns, twParams2.rows]);
         const data = regs2.map((bounds, i) => {
-            const _x = bounds[0] + bounds[2]/2;
-            const _y = bounds[1] + bounds[3]/2;
+            const _x = bounds[0] + bounds[2] / 2;
+            const _y = bounds[1] + bounds[3] / 2;
             const from = {
                 x: _x,
                 y: _y,
