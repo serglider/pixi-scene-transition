@@ -3,13 +3,11 @@ export default class SceneTransition {
     constructor(renderer, tweenLib) {
         this._ticker = new PIXI.ticker.Ticker();
         this._ticker.stop();
-        // this._ticker.add(() => {
-        //     tweenLib.update();
-        // });
-        if (tweenLib.Tween) {
-        console.log('TWEEN');
-        }else {
-            console.log('GSAP');
+        this._tweenLibName = tweenLib.Tween ? 'TWEEN' : 'GSAP';
+        if (this._tweenLibName === 'TWEEN') {
+            this._ticker.add(() => {
+                tweenLib.update();
+            });
         }
         this._tweenLib = tweenLib;
         this._renderer = renderer;
@@ -17,7 +15,11 @@ export default class SceneTransition {
 
     createTransition(fromView, toView, data) {
 
+        const createTween = this[`_create${this._tweenLibName}Tween`].bind(this);
+        const startTween = this[`_start${this._tweenLibName}Tween`].bind(this);
+
         const isFrom = SceneTransition.getTransitionType(data);
+
         let container1, container2;
         if (!isFrom) {
             container1 = fromView;
@@ -26,6 +28,7 @@ export default class SceneTransition {
             container1 = toView;
             container2 = fromView;
         }
+
         const toIndex = container2.parent.getChildIndex(container2);
         const transitionContainer = new PIXI.Container();
         container2.parent.addChildAt(transitionContainer, toIndex + 1);
@@ -43,7 +46,7 @@ export default class SceneTransition {
                 };
             }
             transitionContainer.addChild(sprite);
-            return this._createTween(sprite, item);
+            return createTween(sprite, item);
         });
 
         return {
@@ -52,7 +55,7 @@ export default class SceneTransition {
                 transitionContainer.visible = true;
                 container2.visible = true;
                 this._ticker.start();
-                const promises = tweens.map(this._startTween);
+                const promises = tweens.map(startTween);
                 return Promise.all(promises).then(() => {
                     if (isFrom) {
                         container1.visible = true;
@@ -66,33 +69,62 @@ export default class SceneTransition {
         }
     }
 
-    _startTween(tw) {
+    _startTWEENTween(tw) {
+        return new Promise(resolve => {
+            tw.onComplete(resolve).start();
+        });
+    }
+
+    _startGSAPTween(tw) {
         return new Promise(resolve => {
             tw.eventCallback('onComplete', resolve);
             tw.play();
         });
     }
 
-    _createTween(sprite, data) {
+    _createTWEENTween(sprite, data) {
         const tweenKeys = Object.keys(data.to);
         const tweenObj = tweenKeys.reduce(addToTweenObj, {});
-        const delay = data.delay/1000 || 0;
-        const ease = data.easing || 'Linear.easeNone';
+        const delay = data.delay || 0;
+        const easing = data.easing || this._tweenLib.Easing.Linear.None;
+        return new this._tweenLib.Tween(tweenObj)
+            .to(data.to, data.duration)
+            .onUpdate(update)
+            .delay(delay)
+            .easing(easing);
 
+        function addToTweenObj(obj, key) {
+            if (key === 'scale') {
+                obj[key] = data.from && ('scale' in data.from) ? data.from.scale : 1;
+            } else {
+                obj[key] = sprite[key];
+            }
+            return obj;
+        }
+
+        function update() {
+            tweenKeys.forEach(key => {
+                if (key === 'scale') {
+                    sprite.scale.set(tweenObj[key]);
+                } else {
+                    sprite[key] = tweenObj[key];
+                }
+            });
+        }
+    }
+
+    _createGSAPTween(sprite, data) {
+        const tweenKeys = Object.keys(data.to);
+        const tweenObj = tweenKeys.reduce(addToTweenObj, {});
+        const delay = data.delay / 1000 || 0;
+        const ease = data.easing || 'Linear.easeNone';
         const vars = Object.assign({}, data.to, {
             paused: true,
             delay,
             ease,
             onUpdate: update
         });
-
-        return this._tweenLib.to(tweenObj, data.duration/1000, vars);
-
-        // return new this._tweenLib.Tween(tweenObj)
-        //                 .to(data.to, data.duration)
-        //                 .onUpdate(update)
-        //                 .delay(delay)
-        //                 .easing(easing);
+        return this._tweenLib.to(tweenObj, data.duration / 1000, vars);
 
         function addToTweenObj(obj, key) {
             if (key === 'scale') {

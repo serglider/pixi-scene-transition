@@ -75,7 +75,7 @@ function setup(loader, resources) {
     const anim = createAnimation(scene1, resources.anim, {x: W / 2 - 200, y: H / 2});
     const anim1 = createAnimation(scene2, resources.anim, {x: W / 2 + 200, y: H / 2});
 
-    const stm = new STM(app.renderer, TweenLite);
+    const stm = new STM(app.renderer, TweenMax);
 
     app.ticker.add(function () {
         anim.rotation += 0.01;
@@ -86,15 +86,15 @@ function setup(loader, resources) {
         const regs1 = STM.getRegions(scene1, [twParams1.columns, twParams1.rows]);
         const data = regs1.map((bounds, i) => {
 
-            const _x = bounds[0] + bounds[2] / 2;
-            const _y = bounds[1] + bounds[3] / 2;
+            const _x = bounds[0] + bounds[2]/2;
+            const _y = bounds[1] + bounds[3]/2;
             const to = {
                 x: _x,
                 y: _y,
                 scale: 0.01,
                 rotation: twParams1.rotation
             };
-            const delay = Math.random() > 0.5 ? 0 : 600;
+            const delay = i%2 ? 0 : 300;
             return {
                 anchor: 0.5,
                 bounds,
@@ -112,8 +112,8 @@ function setup(loader, resources) {
     scene2.on('pointerdown', () => {
         const regs2 = STM.getRegions(scene1, [twParams2.columns, twParams2.rows]);
         const data = regs2.map((bounds, i) => {
-            const _x = bounds[0] + bounds[2] / 2;
-            const _y = bounds[1] + bounds[3] / 2;
+            const _x = bounds[0] + bounds[2]/2;
+            const _y = bounds[1] + bounds[3]/2;
             const from = {
                 x: _x,
                 y: _y,
