@@ -58,7 +58,7 @@ f1.add(twParams1, 'delay', 0, 5000).step(50);
 f1.add(twParams1, 'duration', 0, 5000).step(50);
 const ctrl1 = f1.add(twParams1, 'eas', esList);
 ctrl1.onFinishChange(setEasing.bind(twParams1));
-f1.open();
+// f1.open();
 const f2 = gui.addFolder('transition 2');
 f2.add(twParams2, 'columns', 1, 30).step(1);
 f2.add(twParams2, 'rows', 1, 30).step(1);
