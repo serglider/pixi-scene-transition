@@ -9,7 +9,9 @@ module.exports = function (env) {
         output: {
             path: path.resolve(__dirname, 'build'),
             filename: 'scene-transition.js',
-            publicPath: '/build/'
+            publicPath: '/build/',
+            library: 'sceneTransition',
+            libraryTarget: 'umd'
         },
         devServer: {
             open: true
@@ -17,6 +19,17 @@ module.exports = function (env) {
         devtool: 'source-map',
         plugins: [
             new webpack.ProgressPlugin()
-        ]
+        ],
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: "babel-loader"
+                    }
+                }
+            ]
+        }
     };
 };
