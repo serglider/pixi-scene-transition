@@ -13,6 +13,41 @@ export default class SceneTransition {
         this._renderer = renderer;
     }
 
+    createFadeTransition(fromView, toView, common = {}, fadeOut = {}, fadeIn = {}) {
+        const {width, height} = fromView;
+        const bounds = [0, 0, width, height];
+        const defaults = {
+            color: 0x000000,
+            sprite: null
+        };
+        const commonOptions = Object.assign({}, defaults, common);
+        const fadeOutOptions = Object.assign({}, commonOptions, fadeOut);
+        const fadeInOptions = Object.assign({}, commonOptions, fadeIn);
+        fadeOutOptions.bounds = fadeInOptions.bounds = bounds;
+
+        fadeOutOptions.from = {alpha: 0};
+        fadeInOptions.to = {alpha: 0};
+
+        const toIndex = fromView.parent.getChildIndex(fromView);
+        const interimContainer = new PIXI.Container();
+        interimContainer.visible = false;
+        fromView.parent.addChildAt(interimContainer, toIndex + 1);
+        const fadeMask = new PIXI.Graphics();
+        interimContainer.addChild(fadeMask);
+        fadeMask.lineStyle(0);
+        fadeMask.beginFill(commonOptions.color);
+        fadeMask.drawRect(...bounds);
+
+        const foTrans = this.createTransition(fromView, interimContainer, [fadeOutOptions]);
+        const fiTrans = this.createTransition(interimContainer, toView, [fadeInOptions]);
+
+        return {
+            start: () => {
+                return foTrans.start().then(() => fiTrans.start());
+            }
+        }
+    }
+
     createTransition(fromView, toView, data) {
 
         const createTween = this[`_create${this._tweenLibName}Tween`].bind(this);
@@ -86,9 +121,10 @@ export default class SceneTransition {
         const tweenKeys = Object.keys(data.to);
         const tweenObj = tweenKeys.reduce(addToTweenObj, {});
         const delay = data.delay || 0;
+        const duration = data.duration || 500;
         const easing = data.easing || this._tweenLib.Easing.Linear.None;
         return new this._tweenLib.Tween(tweenObj)
-            .to(data.to, data.duration)
+            .to(data.to, duration)
             .onUpdate(update)
             .delay(delay)
             .easing(easing);
@@ -116,6 +152,7 @@ export default class SceneTransition {
     _createGSAPTween(sprite, data) {
         const tweenKeys = Object.keys(data.to);
         const tweenObj = tweenKeys.reduce(addToTweenObj, {});
+        const duration = data.duration / 1000 || 0.5;
         const delay = data.delay / 1000 || 0;
         const ease = data.easing || 'Linear.easeNone';
         const vars = Object.assign({}, data.to, {
@@ -124,7 +161,7 @@ export default class SceneTransition {
             ease,
             onUpdate: update
         });
-        return this._tweenLib.to(tweenObj, data.duration / 1000, vars);
+        return this._tweenLib.to(tweenObj, duration, vars);
 
         function addToTweenObj(obj, key) {
             if (key === 'scale') {

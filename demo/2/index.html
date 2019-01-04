@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Demo 2</title>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -26,6 +25,12 @@
     <script src="../../build/scene-transition.js" defer></script>
     <script src="../utils.js" defer></script>
     <script src="app.js" defer></script>
+    <script>
+        var match = location.pathname.match(/demo\/(\d+)/);
+        if (match && match[1]) {
+            document.title = "Demo " + match[1];
+        }
+    </script>
 </head>
 <body>
 <div class="container">
