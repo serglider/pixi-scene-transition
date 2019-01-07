@@ -93,7 +93,7 @@ function setup(loader, resources) {
     const anim = createAnimation(scene1, resources.anim, {x: W / 2 - 200, y: H / 2});
     const anim1 = createAnimation(scene2, resources.anim, {x: W / 2 + 200, y: H / 2});
 
-    const stm = new STM(app.renderer, TWEEN);
+    STM.init(app.renderer, TWEEN);
 
     app.ticker.add(function () {
         anim.rotation += 0.01;
@@ -122,7 +122,7 @@ function setup(loader, resources) {
                 to
             };
         });
-        const trans = stm.createTransition(scene1, scene2, data);
+        const trans = STM.createTransition(scene1, scene2, data);
         const lc = logComplete();
         trans.start().then(lc);
     });
@@ -148,7 +148,7 @@ function setup(loader, resources) {
                 from
             };
         });
-        const trans = stm.createTransition(scene2, scene1, data);
+        const trans = STM.createTransition(scene2, scene1, data);
         const lc = logComplete();
         trans.start().then(lc);
     });

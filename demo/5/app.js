@@ -75,7 +75,7 @@ function setup(loader, resources) {
     const anim = createAnimation(scene1, resources.anim, {x: W / 2 - 200, y: H / 2});
     const anim1 = createAnimation(scene2, resources.anim, {x: W / 2 + 200, y: H / 2});
 
-    const stm = new STM(app.renderer, TweenMax);
+    STM.init(app.renderer, TweenMax);
 
     app.ticker.add(function () {
         anim.rotation += 0.03;
@@ -83,7 +83,7 @@ function setup(loader, resources) {
     });
 
     scene1.on('pointerdown', () => {
-        const trans = stm.createFadeTransition(scene1, scene2, {
+        const trans = STM.createFadeTransition(scene1, scene2, {
             easing: twParams1.easing,
             duration: twParams1.duration
         });
@@ -92,7 +92,7 @@ function setup(loader, resources) {
     });
 
     scene2.on('pointerdown', () => {
-        const trans = stm.createFadeTransition(scene2, scene1, {
+        const trans = STM.createFadeTransition(scene2, scene1, {
             easing: twParams2.easing,
             duration: twParams2.duration
         });
