@@ -13,4 +13,4 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2018 Sergey Chernykh
+Copyright (c) 2019 Sergey Chernykh
