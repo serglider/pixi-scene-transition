@@ -2,12 +2,12 @@
   "name": "pixi-transitions",
   "version": "0.1.7",
   "main": "build/scene-transition.js",
-  "description": "todo",
+  "description": "PIXI scene transition manager",
   "scripts": {
     "dev": "webpack-dev-server --port=4000 --env dev",
     "build": "webpack --env prod"
   },
-  "author": "Sergey Chernykh",
+  "author": "Sergey Chernykh <s-chernykh@outlook.com>",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.2.2",
