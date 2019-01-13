@@ -93,7 +93,7 @@
 
     function onClick(e) {
         const demoID = e.target.textContent.replace('Demo ', '');
-        frame.src = `/demo/${demoID}`;
+        frame.src = location.href + demoID;
     }
 
     frame.onload = () => {
