@@ -1,6 +1,6 @@
 {
   "name": "pixi-transitions",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "main": "build/scene-transition.js",
   "description": "todo",
   "scripts": {

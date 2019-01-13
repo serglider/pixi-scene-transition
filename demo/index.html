@@ -54,7 +54,7 @@
                     style="border:none"
                     width="1000"
                     height="620"
-                    src="/demo/1">
+                    src="https://serglider.github.io/pixi-scene-transition/demo/1/">
             </iframe>
             </div>
         </div>
@@ -93,7 +93,7 @@
 
     function onClick(e) {
         const demoID = e.target.textContent.replace('Demo ', '');
-        frame.src = location.href + demoID;
+        frame.src = location.href + demoID + '/';
     }
 
     frame.onload = () => {
