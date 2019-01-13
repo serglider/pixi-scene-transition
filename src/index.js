@@ -34,3 +34,4 @@ PIXI.SceneTransitionManager = {
     _getSprite,
     _getTransitionType,
 };
+

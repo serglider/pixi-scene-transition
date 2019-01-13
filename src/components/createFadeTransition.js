@@ -3,7 +3,8 @@ export default function createFadeTransition(fromView, toView, common = {}, fade
     const bounds = [0, 0, width, height];
     const defaults = {
         color: 0x000000,
-        sprite: null
+        sprite: null,
+        onFadeOut: () => {}
     };
     const commonOptions = Object.assign({}, defaults, common);
     const fadeOutOptions = Object.assign({}, commonOptions, fadeOut);
@@ -18,7 +19,10 @@ export default function createFadeTransition(fromView, toView, common = {}, fade
 
     return {
         start: () => {
-            return fadeOutTrans.start().then(() => fadeInTrans.start());
+            return fadeOutTrans.start().then(() => {
+                commonOptions.onFadeOut();
+                return fadeInTrans.start()
+            });
         }
     };
 }
